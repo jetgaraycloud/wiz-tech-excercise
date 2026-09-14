@@ -6,7 +6,6 @@ cat <<REPOEOF > /etc/apt/sources.list.d/mongodb-org-4.4.list
 deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse
 REPOEOF
 
-apt-get update -y
 wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
 apt-get update -y
 apt-get install -y mongodb-org=4.4.* mongodb-org-server=4.4.* mongodb-org-shell=4.4.* mongodb-org-mongos=4.4.* mongodb-org-tools=4.4.* awscli
