@@ -48,7 +48,7 @@ variable "key_pair_name" {
 variable "eks_cluster_version" {
   description = "Kubernetes version for the EKS control plane"
   type        = string
-  default     = "1.29"
+  default     = "1.32"
 }
 
 variable "mongo_vm_instance_type" {
