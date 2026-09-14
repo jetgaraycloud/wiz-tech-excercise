@@ -35,7 +35,7 @@ cat <<'SCRIPTEOF' > /usr/local/bin/mongo-backup.sh
 #!/bin/bash
 set -e
 TS=$(date +%Y%m%d-%H%M%S)
-mongodump --out /tmp/mongodump-$${TS}
+mongodump --username appuser --password 'CHANGE_ME_BEFORE_USE' --authenticationDatabase admin --db tododb --out /tmp/mongodump-$${TS}
 tar -czf /tmp/mongodump-$${TS}.tar.gz -C /tmp mongodump-$${TS}
 aws s3 cp /tmp/mongodump-$${TS}.tar.gz s3://${backup_bucket}/backups/mongodump-$${TS}.tar.gz
 rm -rf /tmp/mongodump-$${TS} /tmp/mongodump-$${TS}.tar.gz
