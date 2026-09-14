@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-# Install an outdated MongoDB release (4.4 line — EOL, 1+ year old) per exercise requirement
 cat <<REPOEOF > /etc/apt/sources.list.d/mongodb-org-4.4.list
 deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse
 REPOEOF
@@ -12,20 +11,24 @@ apt-get install -y mongodb-org=4.4.* mongodb-org-server=4.4.* mongodb-org-shell=
 
 # Listen on all interfaces; the security group is what restricts source IPs
 sed -i 's/bindIp: 127.0.0.1/bindIp: 0.0.0.0/' /etc/mongod.conf
-cat <<CONFEOF >> /etc/mongod.conf
-security:
-  authorization: enabled
-CONFEOF
 
+# Start mongod WITHOUT auth first, so we can create the user cleanly
 systemctl enable mongod
 systemctl start mongod
 sleep 10
 
-# Create the application DB user (rotate this password before using outside the lab)
 mongo <<MONGOEOF
 use admin
 db.createUser({ user: "appuser", pwd: "CHANGE_ME_BEFORE_USE", roles: [ { role: "readWrite", db: "tododb" } ] })
 MONGOEOF
+
+# NOW enable auth and restart so it takes effect
+cat <<CONFEOF >> /etc/mongod.conf
+security:
+  authorization: enabled
+CONFEOF
+systemctl restart mongod
+sleep 5
 
 # Daily backup script -> public S3 bucket, per exercise requirement
 cat <<'SCRIPTEOF' > /usr/local/bin/mongo-backup.sh
